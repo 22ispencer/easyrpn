@@ -95,3 +95,17 @@ void rpn_stack_roll(rpn_calc *calc) {
   calc->stack.bottom = top;
 }
 
+// -- Basic Arithmetic --
+
+int rpn_add(rpn_calc *calc) {
+  if (calc->stack.top == NULL)
+    return -1;
+  rpn_stacknode *new_top = calc->stack.top->next;
+  if (new_top == NULL)
+    return -1;
+
+  new_top->data += rpn_stack_drop(calc);
+  calc->stack.top = new_top;
+
+  return 0;
+}
