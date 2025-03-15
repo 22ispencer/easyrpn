@@ -4,7 +4,7 @@
 // -- Calculator state --
 
 typedef struct rpn_stacknode {
-  float data;
+  double data;
   struct rpn_stacknode *next;
   struct rpn_stacknode *prev;
 } rpn_stacknode;
@@ -23,10 +23,10 @@ typedef struct rpn_calc {
 rpn_calc *rpn_init();
 /// Destroy all app data, this frees `calc`
 void rpn_deinit(rpn_calc *calc);
-/// Add a number to the top of the stack
-int rpn_stack_push(rpn_calc *calc, float);
+/// Adds `num` to the top of the stack
+int rpn_stack_push(rpn_calc *calc, double num);
 /// Remove the top number in the stack
-float rpn_stack_drop(rpn_calc *calc);
+double rpn_stack_drop(rpn_calc *calc);
 /// Swap the top two values on the stack
 int rpn_stack_swap(rpn_calc *calc);
 /// Roll the top value to the last value and move every other value forwards.

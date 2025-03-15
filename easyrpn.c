@@ -1,4 +1,5 @@
 #include "easyrpn.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 // -- Calculator State --
@@ -17,10 +18,14 @@ rpn_calc *rpn_init() {
 }
 
 void rpn_deinit(rpn_calc *calc) {
-  rpn_stacknode *prev_top = calc->stack.top;
-  while (prev_top != NULL) {
-    calc->stack.top = prev_top->prev;
-    free(prev_top);
+  rpn_stacknode *ptr = calc->stack.bottom;
+  if (ptr != NULL) {
+    rpn_stacknode *next = ptr->next;
+    while (ptr != NULL) {
+      next = ptr->next;
+      free(ptr);
+      ptr = next;
+    }
   }
   free(calc);
 }
@@ -35,7 +40,7 @@ rpn_stacknode *rpn_stack_empty_node() {
   return node;
 }
 
-int rpn_stack_push(rpn_calc *calc, float num) {
+int rpn_stack_push(rpn_calc *calc, double num) {
   rpn_stacknode *prev_top = calc->stack.top;
   rpn_stacknode *top = rpn_stack_empty_node();
   if (top == NULL) {
@@ -56,14 +61,17 @@ int rpn_stack_push(rpn_calc *calc, float num) {
   return 0;
 }
 
-float rpn_stack_drop(rpn_calc *calc) {
+double rpn_stack_drop(rpn_calc *calc) {
   rpn_stacknode *prev_top = calc->stack.top;
-  float data = prev_top->data;
+  rpn_stacknode *new_top = prev_top->prev;
+  double data = prev_top->data;
 
-  calc->stack.top = prev_top->prev;
-  if (prev_top->prev == NULL) {
+  if (new_top != NULL) {
+    new_top->next = NULL;
+  } else {
     calc->stack.bottom = NULL;
   }
+  calc->stack.top = new_top;
   free(prev_top);
   calc->stack.size--;
 
@@ -98,14 +106,11 @@ void rpn_stack_roll(rpn_calc *calc) {
 // -- Basic Arithmetic --
 
 int rpn_add(rpn_calc *calc) {
-  if (calc->stack.top == NULL)
-    return -1;
-  rpn_stacknode *new_top = calc->stack.top->next;
-  if (new_top == NULL)
+  if (calc->stack.size < 2)
     return -1;
 
-  new_top->data += rpn_stack_drop(calc);
-  calc->stack.top = new_top;
+  double to_add = rpn_stack_drop(calc);
+  calc->stack.top->data += to_add;
 
   return 0;
 }
