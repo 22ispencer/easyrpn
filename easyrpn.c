@@ -105,12 +105,17 @@ void rpn_stack_roll(rpn_calc *calc) {
 
 // -- Basic Arithmetic --
 
-int rpn_add(rpn_calc *calc) {
-  if (calc->stack.size < 2)
-    return -1;
+#define DOUBLE_ARGUMENT(name, operation)                                       \
+                                                                               \
+  int rpn_##name(rpn_calc *calc) {                                             \
+    if (calc->stack.size < 2)                                                  \
+      return -1;                                                               \
+    double dropped = rpn_stack_drop(calc);                                     \
+    calc->stack.top->data = calc->stack.top->data operation dropped;           \
+    return 0;                                                                  \
+  }
 
-  double to_add = rpn_stack_drop(calc);
-  calc->stack.top->data += to_add;
-
-  return 0;
-}
+DOUBLE_ARGUMENT(add, +);
+DOUBLE_ARGUMENT(subtract, -);
+DOUBLE_ARGUMENT(multiply, *);
+DOUBLE_ARGUMENT(divide, /);
