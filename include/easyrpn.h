@@ -19,22 +19,28 @@ typedef struct rpn_calc {
   rpn_stack stack;
 } rpn_calc;
 
-/// Create a new calculator state
+/// Create a new calculator state.
 rpn_calc *rpn_init();
-/// Destroy all app data, this frees `calc`
+/// Destroy all app data, this frees `calc`.
 void rpn_deinit(rpn_calc *calc);
-/// Adds `num` to the top of the stack
+/// Adds `num` to the top of the stack.
 int rpn_stack_push(rpn_calc *calc, double num);
-/// Remove the top number in the stack
+/// Remove the top number in the stack.
 double rpn_stack_drop(rpn_calc *calc);
-/// Swap the top two values on the stack
+/// Swap the top two values on the stack.
 int rpn_stack_swap(rpn_calc *calc);
 /// Roll the top value to the last value and move every other value forwards.
 void rpn_stack_roll(rpn_calc *calc);
 
-// -- Basic arithmetic functions
+// -- Basic arithmetic functions --
 
-/// Adds `num` to the top number on the stack
+/// Adds `num` to the top number on the stack.
 int rpn_add(rpn_calc *calc);
+/// Subtracts `num` from the top number on the stack.
+int rpn_subtract(rpn_calc *calc);
+/// Multiplies `num` by the top numbers on the stack.
+int rpn_multiply(rpn_calc *calc);
+/// Divides the top number of the stack by `num`.
+int rpn_divide(rpn_calc *calc);
 
 #endif // !LIBRPN_H
