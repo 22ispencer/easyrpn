@@ -118,7 +118,7 @@ void rpn_stack_roll(rpn_calc *calc) {
 #define SINGLE_ARGUMENT_FN(name, fn)                                           \
                                                                                \
   int rpn_##name(rpn_calc *calc) {                                             \
-    if (calc->stack.size < 2)                                                  \
+    if (calc->stack.size < 1)                                                  \
       return -1;                                                               \
     calc->stack.top->data = fn(calc->stack.top->data);                         \
     return 0;                                                                  \
