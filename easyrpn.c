@@ -1,4 +1,5 @@
 #include "easyrpn.h"
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -103,9 +104,8 @@ void rpn_stack_roll(rpn_calc *calc) {
   calc->stack.bottom = top;
 }
 
-// -- Basic Arithmetic --
-
-#define DOUBLE_ARGUMENT(name, operation)                                       \
+// -- Macros --
+#define DOUBLE_ARGUMENT_OP(name, operation)                                    \
                                                                                \
   int rpn_##name(rpn_calc *calc) {                                             \
     if (calc->stack.size < 2)                                                  \
@@ -115,7 +115,50 @@ void rpn_stack_roll(rpn_calc *calc) {
     return 0;                                                                  \
   }
 
-DOUBLE_ARGUMENT(add, +);
-DOUBLE_ARGUMENT(subtract, -);
-DOUBLE_ARGUMENT(multiply, *);
-DOUBLE_ARGUMENT(divide, /);
+#define SINGLE_ARGUMENT_FN(name, fn)                                           \
+                                                                               \
+  int rpn_##name(rpn_calc *calc) {                                             \
+    if (calc->stack.size < 2)                                                  \
+      return -1;                                                               \
+    calc->stack.top->data = fn(calc->stack.top->data);                         \
+    return 0;                                                                  \
+  }
+
+#define DOUBLE_ARGUMENT_FN(name, fn)                                           \
+                                                                               \
+  int rpn_##name(rpn_calc *calc) {                                             \
+    if (calc->stack.size < 2)                                                  \
+      return -1;                                                               \
+    double dropped = rpn_stack_drop(calc);                                     \
+    calc->stack.top->data = fn(calc->stack.top->data, dropped);                \
+    return 0;                                                                  \
+  }
+
+// -- Basic Arithmetic --
+
+DOUBLE_ARGUMENT_OP(add, +);
+DOUBLE_ARGUMENT_OP(subtract, -);
+DOUBLE_ARGUMENT_OP(multiply, *);
+DOUBLE_ARGUMENT_OP(divide, /);
+
+// -- Exponential Operations --
+
+SINGLE_ARGUMENT_FN(exp, exp);
+SINGLE_ARGUMENT_FN(ln, log);
+
+// -- Power Operations --
+
+DOUBLE_ARGUMENT_FN(pow, pow);
+SINGLE_ARGUMENT_FN(sqrt, sqrt);
+double root(double base, double root) { return pow(base, 1 / root); }
+DOUBLE_ARGUMENT_FN(root, root);
+
+// -- Trigonometric Functions --
+
+SINGLE_ARGUMENT_FN(sin, sin);
+SINGLE_ARGUMENT_FN(cos, cos);
+SINGLE_ARGUMENT_FN(tan, cos);
+
+SINGLE_ARGUMENT_FN(asin, asin);
+SINGLE_ARGUMENT_FN(acos, acos);
+SINGLE_ARGUMENT_FN(atan, acos);

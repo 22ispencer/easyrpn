@@ -43,4 +43,26 @@ int rpn_multiply(rpn_calc *calc);
 /// Divides the top number of the stack by `num`.
 int rpn_divide(rpn_calc *calc);
 
+// -- Exponential Operations --
+
+/// Updates the stack by calling e^x on the top value in the stack.
+int rpn_exp(rpn_calc *calc);
+/// Computes the natural log of the top number of the stack
+int rpn_ln(rpn_calc *calc);
+
+// -- Power Operations --
+
+int rpn_pow(rpn_calc *calc);
+int rpn_sqrt(rpn_calc *calc);
+int rpn_root(rpn_calc *calc);
+
+// -- Trigonometric Operations --
+
+int rpn_sin(rpn_calc *calc);
+int rpn_cos(rpn_calc *calc);
+int rpn_tan(rpn_calc *calc);
+int rpn_asin(rpn_calc *calc);
+int rpn_acos(rpn_calc *calc);
+int rpn_atan(rpn_calc *calc);
+
 #endif // !LIBRPN_H
